@@ -6,7 +6,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 
 function App() {
-  const [messages, setMessage] = useState(["WELCOME TO RTC" ,"helo","test"]);
+  const [messages, setMessage] = useState([]);
   const wsRef = useRef()
 
   useEffect(() => {
