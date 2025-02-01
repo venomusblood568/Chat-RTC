@@ -1,10 +1,49 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
+import { useRef } from "react";
 
 export function Chatroom({ messages = [] }: { messages?: string[] }) {
   
   const location = useLocation()
   const{roomId,username} = location.state || {};
+
+  const[userCount, setuserCount] = useState(0);
+  const wsRef = useRef<WebSocket | null >(null)
+
+  useEffect(() => {
+    const ws = new WebSocket("ws://localhost:8080")
+    wsRef.current = ws
+
+    ws.onopen = () => {
+      console.log("WesSocket connection established")
+      ws.send(
+        JSON.stringify({
+          type:"join",
+          payload:{
+            roomId,
+            username
+          }
+        })
+      )
+    }
+
+    ws.onmessage = (event) =>{
+      const message = JSON.parse(event.data)
+
+      if(message.type === "user-count"){
+        setuserCount(message.payload.userCount)
+      }
+    }
+    
+    //clean up
+    return () => {
+      if (wsRef.current) {
+        wsRef.current.close();
+      }
+    };
+
+  },[roomId,username])
+
   return (
     <>
       <div className="flex items-center justify-center min-h-screen bg-black">
@@ -19,7 +58,7 @@ export function Chatroom({ messages = [] }: { messages?: string[] }) {
             {/* Room Info */}
             <div className=" text-amber-50 bg-neutral-700 rounded px-4 py-2 flex justify-between ">
               <span>Room code : {roomId}</span>
-              <span>Users : #</span>
+              <span>Users : {userCount}</span>
             </div>
           </div>
 
