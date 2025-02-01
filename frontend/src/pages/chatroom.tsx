@@ -1,5 +1,10 @@
+import { useState } from "react";
+import { useLocation } from "react-router-dom";
+
 export function Chatroom({ messages = [] }: { messages?: string[] }) {
   
+  const location = useLocation()
+  const{roomId,username} = location.state || {};
   return (
     <>
       <div className="flex items-center justify-center min-h-screen bg-black">
@@ -13,8 +18,8 @@ export function Chatroom({ messages = [] }: { messages?: string[] }) {
 
             {/* Room Info */}
             <div className=" text-amber-50 bg-neutral-700 rounded px-4 py-2 flex justify-between ">
-              <span>Room code: #####</span>
-              <span>Users: #</span>
+              <span>Room code : {roomId}</span>
+              <span>Users : #</span>
             </div>
           </div>
 
@@ -40,17 +45,20 @@ export function Chatroom({ messages = [] }: { messages?: string[] }) {
               placeholder="Enter your message..."
               className="flex-1 bg-black text-white border border-gray-700 px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-500"
             />
-            <button 
-              onClick={() =>{
+            <button
+              onClick={() => {
                 const message = document.getElementById("message")?.value;
-                wsRef.current.send(JSON.stringify({
-                  type: "chat",
-                  payload:{
-                    message:message
-                  }
-                }))
+                wsRef.current.send(
+                  JSON.stringify({
+                    type: "chat",
+                    payload: {
+                      message: message,
+                    },
+                  })
+                );
               }}
-              className="bg-white text-black px-4 py-2 rounded-md font-semibold">
+              className="bg-white text-black px-4 py-2 rounded-md font-semibold"
+            >
               Send
             </button>
           </div>
