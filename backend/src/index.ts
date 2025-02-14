@@ -31,15 +31,21 @@ wss.on("connection", (socket) => {
       console.log(`User joined room: ${currentUserRoom}`);
     }
 
-    if (parsedMessage.type === "chat") {
-      // Find the room of the user who sent the message
-      if (currentUserRoom) {
-        for (let i = 0; i < allSockets.length; i++) {
-          if (allSockets[i].room === currentUserRoom) {
-            allSockets[i].socket.send(parsedMessage.payload.message);
-          }
+    if (parsedMessage.type === "chat" && currentUserRoom) {
+      console.log(`Message in Rooms ${currentUserRoom}:${parsedMessage.payload.message}`)
+
+      allSockets.forEach((user) => {
+        if(user.room === currentUserRoom && user.socket.readyState === WebSocket.OPEN){
+          user.socket.send(
+            JSON.stringify({
+              type:"chat",
+              payload:{
+                message:parsedMessage.payload.message
+              }
+            })
+          )
         }
-      }
+      })
     }
   });
 

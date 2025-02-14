@@ -12,7 +12,7 @@ wss.on("connection", (socket) => {
         if (parsedMessage.type === "join") {
             allSockets.push({
                 socket,
-                room: parsedMessage.payload.roomId
+                room: parsedMessage.payload.roomId,
             });
             currentUserRoom = parsedMessage.payload.roomId;
             if (currentUserRoom) {
@@ -20,17 +20,21 @@ wss.on("connection", (socket) => {
             }
             console.log(`User joined room: ${currentUserRoom}`);
         }
-        if (parsedMessage.type === "chat") {
-            // Find the room of the user who sent the message
-            if (currentUserRoom) {
-                for (let i = 0; i < allSockets.length; i++) {
-                    if (allSockets[i].room === currentUserRoom) {
-                        allSockets[i].socket.send(parsedMessage.payload.message);
-                    }
+        if (parsedMessage.type === "chat" && currentUserRoom) {
+            console.log(`Message in Rooms ${currentUserRoom}:${parsedMessage.payload.message}`);
+            allSockets.forEach((user) => {
+                if (user.room === currentUserRoom && user.socket.readyState === ws_1.WebSocket.OPEN) {
+                    user.socket.send(JSON.stringify({
+                        type: "chat",
+                        payload: {
+                            message: parsedMessage.payload.message
+                        }
+                    }));
                 }
-            }
+            });
         }
     });
+    //code ensures that when a user disconnects, they are removed from the list of active sockets, and the room's user count is updated accordingly.
     socket.on("close", () => {
         if (currentUserRoom) {
             allSockets = allSockets.filter((user) => user.socket !== socket);
