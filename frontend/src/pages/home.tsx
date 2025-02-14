@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { useNavigate } from "react-router-dom"; // Add this import
+import { useNavigate } from "react-router-dom"; 
 import { generateRandomRoomId } from "../genRandom";
 
 export function Home() {
@@ -63,6 +63,12 @@ export function Home() {
     }
   };
 
+  const handleKeyPress = (event:React.KeyboardEvent<HTMLInputElement>) => {
+    if(event.key === "Enter"){
+      joinRoom()
+    }
+  }
+
   return (
     <>
       <div className="flex items-center justify-center min-h-screen bg-black">
@@ -106,6 +112,7 @@ export function Home() {
                 placeholder="Enter your name..."
                 value={name}
                 onChange={(e) => setName(e.target.value)}
+                onKeyDown={handleKeyPress}
                 className="w-full bg-black text-white border border-gray-700 px-4 py-1 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-500"
               />
 
@@ -115,6 +122,7 @@ export function Home() {
                   placeholder="Enter Room Code..."
                   value={roomId}
                   onChange={(e) => setRoomId(e.target.value)}
+                  onKeyDown={handleKeyPress}
                   className="flex-1 bg-black text-white border border-gray-700 px-4 py-1 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-500"
                 />
                 <button
