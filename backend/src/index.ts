@@ -12,44 +12,44 @@ interface User{
 let allSockets: User[] = [];
 
 wss.on("connection", (socket) => {
-
   let currentUserRoom: string | null = null;
 
   // For sending the message
   socket.on("message", (message) => {
     //string to object conversion
-    const parsedMessage = JSON.parse(message.toString())
+    const parsedMessage = JSON.parse(message.toString());
 
-    if(parsedMessage.type === "join"){
+    if (parsedMessage.type === "join") {
       allSockets.push({
         socket,
-        room: parsedMessage.payload.roomId
-      })
+        room: parsedMessage.payload.roomId,
+      });
       currentUserRoom = parsedMessage.payload.roomId;
-      if(currentUserRoom){
-        updateUserCount(currentUserRoom)
+      if (currentUserRoom) {
+        updateUserCount(currentUserRoom);
       }
-      console.log(`User joined room: ${currentUserRoom}`)
+      console.log(`User joined room: ${currentUserRoom}`);
     }
 
-    if(parsedMessage.type === "chat"){
+    if (parsedMessage.type === "chat") {
       // Find the room of the user who sent the message
-      if(currentUserRoom){
+      if (currentUserRoom) {
         for (let i = 0; i < allSockets.length; i++) {
-          if(allSockets[i].room === currentUserRoom){
-            allSockets[i].socket.send(parsedMessage.payload.message)
+          if (allSockets[i].room === currentUserRoom) {
+            allSockets[i].socket.send(parsedMessage.payload.message);
           }
         }
       }
     }
   });
 
-  socket.on("close",() =>{
-    if(currentUserRoom){
+  //code ensures that when a user disconnects, they are removed from the list of active sockets, and the room's user count is updated accordingly.
+  socket.on("close", () => {
+    if (currentUserRoom) {
       allSockets = allSockets.filter((user) => user.socket !== socket);
-      updateUserCount(currentUserRoom)
+      updateUserCount(currentUserRoom);
     }
-  })
+  });
 });
 
 function updateUserCount(room:string){
