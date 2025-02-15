@@ -75,7 +75,7 @@ export function Home() {
         <div className="bg-black border border-gray-700 p-10 rounded-xl shadow-lg text-white w-full max-w-2xl h-[350px]">
           <div className="space-y-4">
             <div className="text-lg">
-              <h1 className="text-xl font-bold">Real Time Chat</h1>
+              <h1 className="text-xl font-bold text-cyan-300">Real Time Chat</h1>
               <p className="text-gray-400 text-md mt-1">
                 NOTE: Temporary room that expires after all users exit
               </p>

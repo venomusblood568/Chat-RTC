@@ -75,7 +75,9 @@ export function Chatroom() {
         <div className="bg-black border border-gray-700 p-10 rounded-xl shadow-lg text-white w-full max-w-2xl h-[750px] flex flex-col">
           {/* Header */}
           <div className="text-lg space-y-5">
-            <h1 className="text-3xl font-bold">Real Time Chat</h1>
+            <h1 className="text-3xl font-bold">
+              <span className="text-cyan-300">Real</span> Time Chat
+            </h1>
             <p className="text-gray-400 text-md">
               NOTE: Temporary room that expires after all users exit
             </p>
@@ -89,15 +91,30 @@ export function Chatroom() {
 
           {/* Chat Box */}
           <div className="border border-gray-700 p-6 rounded-xl shadow-lg text-white w-full flex-grow overflow-auto mt-6 font-semibold">
-            <div className="flex flex-col">
-              {chatMessages.map((msg, index) => (
-                <div
-                  key={index}
-                  className="bg-white text-black mb-2 p-2 rounded-md inline-block max-w-fit"
-                >
-                  <span>{msg}</span>
-                </div>
-              ))}
+            <div className="flex flex-col space-y-2">
+              {chatMessages.map((msg, index) => {
+                const [sender, text] = msg.split(": ");
+                const isSendByUser = sender === username;
+                return (
+                  <div
+                    key={index}
+                    className={`flex ${
+                      isSendByUser ? "justify-end" : "justify-start"
+                    }`}
+                  >
+                    <div
+                      className={`${
+                        isSendByUser
+                          ? "bg-cyan-400 text-black"
+                          : "bg-white text-black"
+                      } p-3 rounded-md max-w-xs shadow-md`}
+                    >
+                      <span>{sender}:</span>
+                      {text}
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </div>
 
@@ -108,11 +125,11 @@ export function Chatroom() {
               type="text"
               placeholder="Enter your message..."
               onKeyPress={handleKeyPress}
-              className="flex-1 bg-black text-white border border-gray-700 px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-500"
+              className="flex-1 bg-black text-white border border-gray-700 px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-400"
             />
             <button
               onClick={sendMessage}
-              className="bg-white text-black px-4 py-2 rounded-md font-semibold"
+              className="bg-cyan-400 text-black px-4 py-2 rounded-md font-semibold"
             >
               Send
             </button>
